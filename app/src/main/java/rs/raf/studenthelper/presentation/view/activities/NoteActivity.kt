@@ -3,6 +3,7 @@ package rs.raf.studenthelper.presentation.view.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_note.*
 import kotlinx.android.synthetic.main.layout_item_note.*
@@ -54,6 +55,11 @@ class NoteActivity : AppCompatActivity(R.layout.activity_note) {
     }
 
     private fun initListeners() {
+
+        inputEt.doAfterTextChanged {
+            val filter = it.toString()
+            noteViewModel.getNotesWithFilter(filter)
+        }
 
         fab.setOnClickListener {
             val intent = Intent(this, NewNoteActivity::class.java)

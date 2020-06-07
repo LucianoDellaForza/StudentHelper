@@ -12,6 +12,7 @@ interface NoteContract {
         fun deleteNote(note: NoteUI)
         fun updateNote(note: NoteUI)
         fun insertNote(note: NoteUI)
+        fun getNotesWithFilter(filter: String)
     }
 
 

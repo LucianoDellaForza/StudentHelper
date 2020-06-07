@@ -25,8 +25,9 @@ abstract class SubjectDao {
     @Query("SELECT * FROM subjects")
     abstract fun getAll(): Observable<List<SubjectEntity>>
 
-    //Filter po groups i day ako stignem
-    @Query("SELECT * FROM subjects WHERE subject LIKE :filter || '%' OR professor LIKE :filter || '%'")
+    //get with filter
+    @Query("SELECT * FROM subjects WHERE professor LIKE :filter || '%' OR subject LIKE :filter || '%'")
     abstract fun getByFilter(filter: String): Observable<List<SubjectEntity>>
+
 
 }

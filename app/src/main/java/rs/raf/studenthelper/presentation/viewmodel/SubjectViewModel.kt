@@ -14,6 +14,7 @@ import rs.raf.studenthelper.presentation.contract.SubjectContract
 import rs.raf.studenthelper.presentation.states.SubjectsState
 import timber.log.Timber
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class SubjectViewModel (
     private val subjectRepository: SubjectRepository
@@ -23,11 +24,32 @@ class SubjectViewModel (
 
     override val subjectsState: MutableLiveData<SubjectsState> = MutableLiveData()
 
-    //za filtriranje
-    private val publishSubject: PublishSubject<String> = PublishSubject.create()    //String treba TipZaFilter
+    private val publishSubject: PublishSubject<String> = PublishSubject.create()
 
     init {
-        //za filtriranje publish subject implementacija
+        val contactsDisposable = publishSubject
+            .debounce(200, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged()
+            .switchMap {
+                subjectRepository
+                    .getAllWithFilter(it)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError {
+                        Timber.e("Error in publish subject")
+                        Timber.e(it)
+                    }
+            }
+            .subscribe(
+                {
+                    subjectsState.value = SubjectsState.Success(it)
+                },
+                {
+                    subjectsState.value = SubjectsState.Error("Error happened while fetching data from db")
+                    Timber.e(it)
+                }
+            )
+        subscriptions.add(contactsDisposable)
     }
 
 
@@ -73,10 +95,8 @@ class SubjectViewModel (
         subscriptions.add(subscription)
     }
 
-    override fun getSubjectsByFilter(
-        filter: String
-    ) {
-        // publishSubject.onNext(filter)
+    override fun getSubjectsWithFilter(filter: String) {
+        publishSubject.onNext(filter)
     }
 
     override fun onCleared() {

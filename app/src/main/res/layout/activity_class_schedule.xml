@@ -22,6 +22,7 @@
 
     <EditText
         android:id="@+id/inputEt"
+        android:hint="Profesor/predmet"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/listRv"

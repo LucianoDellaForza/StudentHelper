@@ -18,4 +18,7 @@ interface NoteRepository {
     //izmena beleske
     fun update(note: NoteUI): Completable
 
+    //getovanje beleski sa fitlerom
+    fun getAllWithFilter(filter: String): Observable<List<NoteUI>>
+
 }

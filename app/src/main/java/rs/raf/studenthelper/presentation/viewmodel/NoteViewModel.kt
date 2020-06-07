@@ -6,10 +6,12 @@ import androidx.lifecycle.ViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import rs.raf.studenthelper.data.models.NoteUI
 import rs.raf.studenthelper.data.repositories.NoteRepository
 import rs.raf.studenthelper.presentation.contract.NoteContract
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 class NoteViewModel(
     private val noteRepository: NoteRepository
@@ -18,6 +20,34 @@ class NoteViewModel(
     private val subscriptions = CompositeDisposable()
 
     override val notes: MutableLiveData<List<NoteUI>> = MutableLiveData()
+
+    private val publishSubject: PublishSubject<String> = PublishSubject.create()
+
+    init {
+        val contactsDisposable = publishSubject
+            .debounce(200, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged()
+            .switchMap {
+                noteRepository
+                    .getAllWithFilter(it)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError {
+                        Timber.e("Error in publish subject")
+                        Timber.e(it)
+                    }
+            }
+            .subscribe(
+                {
+                    notes.value = it
+                },
+                {
+                    Timber.e("Error happened while fetching data from db")
+                    Timber.e(it)
+                }
+            )
+        subscriptions.add(contactsDisposable)
+    }
 
     override fun getAllNotes() {
         val subscription = noteRepository
@@ -87,5 +117,10 @@ class NoteViewModel(
             )
         subscriptions.add(subscription)
     }
+
+    override fun getNotesWithFilter(filter: String) {
+        publishSubject.onNext(filter)
+    }
+
 
 }

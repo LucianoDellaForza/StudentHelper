@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_class_schedule.*
 import org.koin.androidx.viewmodel.compat.ScopeCompat.viewModel
@@ -32,6 +33,7 @@ class ClassScheduleActivity : AppCompatActivity(R.layout.activity_class_schedule
     private fun init() {
         initUi()
         initObservers()
+        initListeners()
     }
 
     private fun initUi() {
@@ -46,7 +48,10 @@ class ClassScheduleActivity : AppCompatActivity(R.layout.activity_class_schedule
     }
 
     private fun initListeners() {
-        //filtriranje
+        inputEt.doAfterTextChanged {
+            val filter = it.toString()
+            subjectViewModel.getSubjectsWithFilter(filter)
+        }
     }
 
 

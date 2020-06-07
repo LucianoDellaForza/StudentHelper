@@ -37,7 +37,7 @@ class UpdateNoteActivity : AppCompatActivity(R.layout.activity_update) {
 
     private fun initListeners() {
         changeNoteBtn2.setOnClickListener {
-            noteViewModel.updateNote(note!!)
+            noteViewModel.updateNote(NoteUI(note!!.id, newTitleEt2.text.toString(), newContentEt2.text.toString()))
             finish()
         }
 

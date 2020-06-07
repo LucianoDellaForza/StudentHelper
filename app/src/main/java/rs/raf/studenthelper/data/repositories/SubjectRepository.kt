@@ -14,4 +14,7 @@ interface SubjectRepository {
 
     //getuje iz baze sa filterom
     fun getByFilter(filter: String): Observable<List<SubjectUI>>
+
+    //getovanje beleski sa fitlerom
+    fun getAllWithFilter(filter: String): Observable<List<SubjectUI>>
 }

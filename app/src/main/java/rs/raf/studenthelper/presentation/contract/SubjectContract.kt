@@ -13,7 +13,7 @@ interface SubjectContract {
 
         fun fetchAllSubjects()
         fun getAllSubjects()
-        fun getSubjectsByFilter(filter: String)   //ja probam sa ?, OVO KASNIJE ->, day: Date?, group: Int?
+        fun getSubjectsWithFilter(filter: String)
 
     }
 }

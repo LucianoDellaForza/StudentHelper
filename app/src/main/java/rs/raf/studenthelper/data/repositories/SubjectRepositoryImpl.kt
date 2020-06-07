@@ -60,4 +60,14 @@ class SubjectRepositoryImpl(
             }
     }
 
+    override fun getAllWithFilter(filter: String): Observable<List<SubjectUI>> {
+        return localDataSource
+            .getByFilter(filter)
+            .map {
+                it.map {
+                    SubjectUI(it.id, it.subject, it.tip, it.professor, it.term, it.classroom)
+                }
+            }
+    }
+
 }

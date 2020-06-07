@@ -26,5 +26,10 @@ abstract class NoteDao {
     @Query("SELECT * FROM notes")
     abstract fun getAll(): Observable<List<NoteEntity>>
 
+    //get with filter
+    @Query("SELECT * FROM notes WHERE title LIKE :filter || '%' OR content LIKE :filter || '%'")
+    abstract fun getByFilter(filter: String): Observable<List<NoteEntity>>
+
+
 
 }

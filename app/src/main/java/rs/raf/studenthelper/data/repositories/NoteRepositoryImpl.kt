@@ -37,4 +37,14 @@ class NoteRepositoryImpl (
         return localDataSource
             .update(noteEntity)
     }
+
+    override fun getAllWithFilter(filter: String): Observable<List<NoteUI>> {
+        return localDataSource
+            .getByFilter(filter)
+            .map {
+                it.map {
+                    NoteUI(it.id, it.title, it.content)
+                }
+            }
+    }
 }
